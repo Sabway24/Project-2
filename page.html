@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<title>Second Page</title>
+<body style="margin: 0; overflow-x: hidden; height: 100vh;">
+    <img src="scene.gif" alt="bg" style="position: absolute; width: 100%; height: 100%; opacity: 50%;">
+    <div style="position: absolute; top: 15%; left: 25%; background-color: white; width: 50%; height: 70%; opacity: 90%; padding: 40px; box-sizing: border-box; border-radius: 20px;">
+        <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 10px;">
+            <div class="button" onclick="filterImages('all')" style="background-color: #c0c0c0; width: 70px; height: 50px; text-align: center; line-height: 50px;"><span style="position: relative;">All</span></div>
+            <div class="button" onclick="filterImages('beach')" style="background-color: #c0c0c0; width: 70px; height: 50px; text-align: center; line-height: 50px;"><span style="position: relative;">Beach</span></div>
+            <div class="button" onclick="filterImages('outdoors')" style="background-color: #c0c0c0; width: 70px; height: 50px; text-align: center; line-height: 50px;"><span style="position: relative;">Outdoors</span></div>
+            <div class="button" onclick="filterImages('culture')" style="background-color: #c0c0c0; width: 70px; height: 50px; text-align: center; line-height: 50px;"><span style="position: relative;">Culture</span></div>
+        </div><br>
+        <form action="/search" method="GET" style="text-align: center; margin-bottom: 20px;" onsubmit="return false;">
+            <input id="search-bar" type="search" placeholder="Search..." style="padding: 10px; width: 250px; border: 1px; border-radius: 10px; background-color: #ffe4e1;">            
+<button type="submit" style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">Search</button>
+        </form><br>
+<div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; gap: 5px; justify-content: center;">
+        <div style="text-align: center; flex: 1;">
+            <img src="bali.jpg" alt="bali" class="image-item beach culture" style="width: 80%; height: auto;">
+            <h3 style="margin-top: 5px;">Bali</h3>
+        </div>
+        <div style="text-align: center; flex: 1;">
+            <img src="KL.jpeg" alt="kl" class="image-item outdoors culture" style="width: 80%; height: auto;">
+            <h3 style="margin-top: 5px;">Kuala Lumpur (KL)</h3>
+        </div>
+        <div style="text-align: center; flex: 1;">
+            <img src="dubai.jpg" alt="dubai" class="image-item beach" style="width: 80%; height: 70%;">
+            <h3 style="margin-top: 5px;">Dubai</h3>
+        </div>
+    </div>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+        <div style="text-align: center; flex: 1;">
+            <img src="paris.jpg" alt="paris" class="image-item culture" style="width: 80%; height: auto;">
+            <h3 style="margin-top: 5px;">Paris</h3>
+        </div>
+        <div style="text-align: center; flex: 1;">
+            <img src="nyc.jpg" alt="nyc" class="image-item outdoors" style="width: 80%; height: auto;">
+            <h3 style="margin-top: 5px;">New York City (NYC)</h3>
+        </div>
+        <div style="text-align: center; flex: 1;">
+            <img src="xian.jpg" alt="xian" class="image-item outdoors" style="width: 80%; height: 58%;">
+            <h3 style="margin-top: 5px;">Xian</h3>
+        </div>
+    </div>
+</div>
+<script>
+	const cursorRing= document.createElement('div');
+	cursorRing.style.position= 'fixed';
+	cursorRing.style.width= '20px';
+	cursorRing.style.height= '20px';
+	cursorRing.style.borderRadius= '50%';
+	cursorRing.style.border= '2px solid #8cd6a0';
+	cursorRing.style.pointerEvents= 'none';
+	cursorRing.style.zIndex= '100';
+	document.body.appendChild(cursorRing);
+
+	document.addEventListener('mousemove', (e)=> {
+		cursorRing.style.left= `${e.clientX - 10}px`;
+		cursorRing.style.top= `${e.clientY - 10}px`;
+	});
+
+	const buttons= document.querySelectorAll('.button span');
+	buttons.forEach(span=> {
+	const underline= document.createElement('div');
+	underline.style.position= 'absolute';
+	underline.style.bottom= '-2px'; // Position below the text
+	underline.style.left= '0';
+	underline.style.width= '0'; // Start with no underline
+	underline.style.height= '1px';
+	underline.style.backgroundColor= 'black';
+	underline.style.transition= 'width 0.1s ease'; // Smooth transition
+	span.appendChild(underline); // Underline to the text
+
+	span.addEventListener('mouseover', ()=> {
+		underline.style.width= '100%'; // Show underline 
+	});
+
+	span.addEventListener('mouseout', ()=> {
+		underline.style.width= '0'; // Hide underline
+
+	});
+     });
+
+    function filterImages(keyword) {
+        const allImages = document.querySelectorAll('.image-item');
+        keyword = keyword.toLowerCase();
+
+        // Show or hide images based on the keyword
+        allImages.forEach(img => {
+            const altText = img.alt.toLowerCase();
+            const classes = Array.from(img.classList);
+
+            if (
+                keyword === 'all' || // Show all images
+                altText.includes(keyword) || // Match by alt text
+                classes.includes(keyword) // Match by class name
+            ) {
+                img.parentElement.style.visibility = 'visible'; // Show parent container
+            } else {
+                img.parentElement.style.visibility = 'hidden'; // Hide parent container
+            }
+        });
+    }
+
+    // Filter images based on category buttons
+    document.querySelectorAll('div[onclick]').forEach(button => {
+        button.addEventListener('click', () => {
+            const category = button.textContent.toLowerCase();
+            filterImages(category);
+        });
+    });
+
+    // Search functionality
+    document.getElementById('search-bar').addEventListener('input', () => {
+        const searchValue = document.getElementById('search-bar').value;
+        filterImages(searchValue);
+    });
+
+    document.getElementById('search-button').addEventListener('click', () => {
+        const searchValue = document.getElementById('search-bar').value;
+        filterImages(searchValue);
+    });
+</script>
+</body>
+</html>
